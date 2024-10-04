@@ -1,0 +1,79 @@
+import cv2
+
+def swap_pixels(image):
+  """Swaps the pixel values in an image.
+
+  Args:
+    image: The input image.
+
+  Returns:
+    The encrypted image.
+  """
+
+  height, width, channels = image.shape
+  encrypted_image = image.copy()
+
+  for y in range(height):
+    for x in range(width):
+      if x < width - 1:
+        encrypted_image[y, x], encrypted_image[y, x + 1] = encrypted_image[y, x + 1], encrypted_image[y, x]
+
+  return encrypted_image
+
+def apply_math_operation(image, operation):
+  """Applies a basic mathematical operation to each pixel in an image.
+
+  Args:
+    image: The input image.
+    operation: The mathematical operation to apply (e.g., 'add', 'subtract', 'multiply', 'divide').
+
+  Returns:
+    The encrypted image.
+  """
+
+  height, width, channels = image.shape
+  encrypted_image = image.copy()
+
+  for y in range(height):
+    for x in range(width):
+      for c in range(channels):
+        pixel_value = encrypted_image[y, x, c]
+        if operation == 'add':
+          pixel_value += 100
+        elif operation == 'subtract':
+          pixel_value -= 100
+        elif operation == 'multiply':
+          pixel_value *= 2
+        elif operation == 'divide':
+          pixel_value //= 2
+        encrypted_image[y, x, c] = pixel_value
+
+  return encrypted_image
+
+def main():
+  while True:
+    choice = input("Choose an option:\n1. Encrypt\n2. Decrypt\n3. Quit\n")
+    if choice == '1':
+      image_path = input("Enter the path to the image to encrypt: ")
+      image = cv2.imread(image_path)
+      operation = input("Choose an operation (add, subtract, multiply, divide): ")
+      encrypted_image = apply_math_operation(image, operation)
+      encrypted_image_path = input("Enter the path to save the encrypted image: ")
+      cv2.imwrite(encrypted_image_path, encrypted_image)
+      print("Image encrypted successfully!")
+    elif choice == '2':
+      image_path = input("Enter the path to the encrypted image: ")
+      image = cv2.imread(image_path)
+      operation = input("Choose the same operation used for encryption: ")
+      decrypted_image = apply_math_operation(image, operation)
+      decrypted_image_path = input("Enter the path to save the decrypted image: ")
+      cv2.imwrite(decrypted_image_path, decrypted_image)
+      print("Image decrypted successfully!")
+    elif choice == '3':
+      print("Exiting...")
+      break
+    else:
+      print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+  main()
